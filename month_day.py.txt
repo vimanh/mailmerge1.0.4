@@ -11,4 +11,6 @@ def Month():
 def Day():
 	return str(now.day) +"/"+ str(now.month) +"/"+ str(now.year)
 
+# noi dung chua thay doi
+
  
