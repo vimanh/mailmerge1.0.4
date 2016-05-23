@@ -1,0 +1,8 @@
+[EMAIL]=0,[HOTEN]=2
+[dataFile]=D:\EDX\Bang tinh luong T2-2016v1.xlsx
+[messageFile]=D:\EDX\demo_MooM.txt
+[USER]=vimanh999@gmail.com,[PASS]=viducmanh999
+[SUBJECT]=Mail kiem thu vui long khong reply
+[SHEET]= 1
+[LUONGTHANG]=3,[NGAY]=7,[THANG]=4,[NAM]=2016
+img1.png=<image1>,img2.png=<image2>,img3.png=<image3>
