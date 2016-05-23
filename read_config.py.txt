@@ -8,3 +8,5 @@ def readConfig():
 	return config_list
 
 #print len(readConfig())
+
+#day la noi dung edit
