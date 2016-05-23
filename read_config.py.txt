@@ -1,0 +1,10 @@
+def readConfig():
+	config_buffer = open('config_file.txt','r')
+	config_list = []
+	for line_content in config_buffer:
+		#print line_content
+		config_list.append(dict(map(str,x.split('=')) for x in line_content.split(",")))
+		#print config_list
+	return config_list
+
+#print len(readConfig())

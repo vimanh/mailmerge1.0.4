@@ -1,0 +1,33 @@
+#-*- coding:utf-8 -*-
+import xlrd
+import read_config
+import re
+
+def getPathFile(config_line): 
+	file_path = config_line[config_line.keys()[0]].strip() # Gán file_path = value của key,xóa bỏ các khoảng tráng trong tên file
+	return file_path					 #trả về file_path
+
+
+def getData(config_list):	
+	data = []		 						# hàm lấy dữ liệu
+	file_path = getPathFile(config_list[1]) #lấy đường dẫn của dl,sd hàm getPatFile với tham số truyền vào là dict1 trong list
+	wb = xlrd.open_workbook(file_path) 		#mở file với dduongf dẫn vừa có
+	sheet = wb.sheet_by_index(int(config_list[5]['[SHEET]']))# lựa trọn sheet làm việc
+	for  r in xrange(1 ,(sheet.nrows)): 	#cho r chạy trong tất cả các dòng
+		TDRow = {} 	
+		if re.search('\w+[.|\w]\w+@\w+[.]\w+[.|\w+]\w+',sheet.cell_value(r,0)) != None:						#tạo ra 1 dict để lưu trữ các dữ liệu trong dòng
+			for key in config_list[0]: 			# tạo biến Key chạy trong các key của dict đssù tiên
+				icol = int(config_list[0][key].strip())
+				TDRow[key] = sheet.cell_value(r,icol)
+			data.append(TDRow)
+	#print len(data)
+	return data
+
+def getMessageFormat(config_line):			#tạo hàm tạo format cho message
+	file_path = getPathFile(config_line) 	#sử dụng hàm getPatFile để lấy được đường ẫn tới file txt
+	o = open(file_path) 					#mở file text
+	r = o.read()							#đọc file text
+	return r 								#trả về kết quả đõ đọc
+config_list = read_config.readConfig()
+
+#print getData(config_list)

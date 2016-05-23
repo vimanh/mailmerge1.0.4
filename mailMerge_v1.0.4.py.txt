@@ -1,0 +1,93 @@
+# -*- coding: utf-8 -*-
+import smtplib, socket, sys, getpass
+from email.mime.multipart import MIMEMultipart	#T viện xác định ng gửi và người nhận
+from email.mime.text import MIMEText 			#Thư viện dùng để đọc file text
+from email.mime.application import MIMEApplication #thư viện dùng để gửi file đính kèm
+from email.mime.image import MIMEImage
+from month_day import * 						#xác định ngày tháng.
+#from file_Content import * 						#Module do mình tạo ra
+from li_data import * 
+from lib_Ansi import *						# chua cac ham getData, getMessageFormat
+config_list = read_config.readConfig()			#Tra ve list lay tu file txt
+data = getData(config_list) 					#tra ve 1 list chua cac tu dien trong do co cac value la nd can ch 
+message = getMessageFormat(config_list[2]) 	# tra ve duong dan cua file chua nd email
+
+def makeMessage(str_format,data_line): 	#thay the cac nd trong thu
+	for key in data_line:
+		if type(data_line[key]) == unicode:
+			str_format = str_format.replace(key,data_line[key].encode("utf-8"))
+		elif type(data_line[key]) == float:
+			str_format = str_format.replace(key,'{:,.0f}'.format(data_line[key]))
+		else:
+			str_format = str_format.replace(key,str(data_line[key]))	
+	return str_format
+
+
+def makeAnsi(dic_Ansi,message):				#Thay thế các ký tự unicode trở thành dạng ansi
+	for i in dic_Ansi:
+		message = message.replace(i,dic_Ansi[i])
+	return message.strip()
+
+
+def getSubject(config_line): 			#Tra ve object cua mail
+	subject = config_line['[SUBJECT]']
+	return subject
+
+
+def getEmail(config_line): 				#tra ve email
+	my_Email = config_line['[USER]']
+	return my_Email
+
+
+def getPassWord(config_line): 			#tra ve password
+	my_Password = config_line['[PASS]']
+	return my_Password
+
+def getpicture(config_line):
+	li_Picture = config_line
+	return config_line
+
+#print getpicture(config_list[7])
+
+def login(): 							#loggin vao gmail,sau do tra ve giao thuc
+	s = smtplib.SMTP('smtp.gmail.com',587)
+	msg = MIMEMultipart()
+	s.starttls()
+	try:
+		s.login(getEmail(config_list[3]),getPassWord(config_list[3]))
+		print "Login successfull"
+	except Exception, e:
+		print e
+	return s
+
+def sendEmail(xls_data): 	#Gui Email
+	smtp=login()
+	message1 = makeMessage(message,config_list[6])
+	#print message1
+	
+	for dic in xls_data:
+		#print dic
+		msg = MIMEMultipart()
+		mail_address = dic['[EMAIL]']
+		msg['From'] = getEmail(config_list[3])
+		msg['Subject'] = getSubject(config_list[4])
+		contentEmail = makeMessage(message1,dic)
+		contentEmail = makeAnsi(Docx,contentEmail)
+		msg.attach(MIMEText(contentEmail,'html'))
+		if (message1.find('<img')>= 0):
+			print 'Noi dung thu co anh dinh kem\n'
+			for x in getpicture(config_list[7]): # khởi tạo vòng for chạy trong các key của từ điển
+				fp = open(x, 'rb') # mở file ảnh
+				#print x
+				msgImage = MIMEImage(fp.read()) #gán biến msgImage để đọc file ảnh
+				fp.close() #đóng file ảnh vừa đọc
+				msgImage.add_header('Content-ID',getpicture(config_list[7][x]))
+				msg.attach(msgImage)
+		try:
+			smtp.sendmail(getEmail(config_list[3]),mail_address,msg.as_string())
+			print "Sending... %s"%mail_address
+		except Exception, e:
+			print e
+			print "Error Send mail step"
+	
+sendEmail(data)

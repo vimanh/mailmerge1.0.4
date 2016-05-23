@@ -1,0 +1,5 @@
+#-*- coding:utf-8 -*-
+from distutils.core import setup
+import py2exe
+setup(console=['mailMerge_v1.0.3.py']) #điền tên file .py vào trong [] (ngoặc vuông)
+

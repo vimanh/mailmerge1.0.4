@@ -1,0 +1,14 @@
+import datetime
+now = datetime.datetime.now()
+def Month():
+	month = now.month
+	if month == 1:
+		month = 12
+	else:
+		month = month - 1
+	return month
+
+def Day():
+	return str(now.day) +"/"+ str(now.month) +"/"+ str(now.year)
+
+ 
